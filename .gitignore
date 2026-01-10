@@ -1,0 +1,11 @@
+# Секреты
+.env
+
+node_modules/
+venv/
+.venv
+__pycache__/
+*.pyc
+
+.DS_Store
+Thumbs.db
