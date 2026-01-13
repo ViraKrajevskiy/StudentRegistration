@@ -109,3 +109,9 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# URL, по которому файлы будут доступны в браузере
+MEDIA_URL = '/media/'

@@ -1,8 +1,35 @@
 from django.db import models
-from django.db import models
+from django.utils import translation
+
+class Faculty(models.Model):
+    name_uz = models.CharField(max_length=200, verbose_name="Fakultet nomi (UZ)")
+    name_ru = models.CharField(max_length=200, verbose_name="Название факультета (RU)")
+    name_en = models.CharField(max_length=200, verbose_name="Faculty name (EN)")
+
+    @property
+    def name(self):
+        lang = translation.get_language()
+        if lang == 'ru':
+            return self.name_ru
+        elif lang == 'en':
+            return self.name_en
+        return self.name_uz
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Факультет"
+        verbose_name_plural = "Факультеты"
 
 class Direction(models.Model):
-    # Удалили старое поле name, оставили только языковые
+    faculty = models.ForeignKey(
+        Faculty,
+        on_delete=models.CASCADE,
+        related_name='directions',
+        verbose_name="Fakultet"
+    )
+
     name_uz = models.CharField(max_length=200, verbose_name="Nomi (UZ)")
     name_ru = models.CharField(max_length=200, verbose_name="Название (RU)")
     name_en = models.CharField(max_length=200, verbose_name="Name (EN)")
@@ -24,7 +51,6 @@ class Direction(models.Model):
             return self.name_en
         return self.name_uz
 
-    # Обязательно добавь это, чтобы в списках было красиво
     def __str__(self):
         return f"{self.code} - {self.name}"
 
@@ -39,4 +65,3 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
-

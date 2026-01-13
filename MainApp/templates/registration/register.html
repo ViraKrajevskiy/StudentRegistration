@@ -6,146 +6,171 @@
     <title>{{ t.title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
-        .card { border: none; border-radius: 20px; }
-        .form-header { background: linear-gradient(45deg, #2c3e50, #3498db); color: white; padding: 40px; border-radius: 20px 20px 0 0; }
-        .section-title { color: #3498db; border-left: 5px solid #3498db; padding-left: 15px; margin: 30px 0 20px 0; font-weight: bold; }
-        .btn-submit { padding: 15px; font-size: 1.2rem; border-radius: 10px; font-weight: bold; }
-        .social-icons a { width: 40px; height: 40px; line-height: 40px; text-align: center; border-radius: 50%; background: #fff; color: #2c3e50; margin: 0 5px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: 0.3s; }
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            --bg-body: #f8faff;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --input-bg: #fcfdfe;
+            --input-border: #edf2f7;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --input-bg: #0f172a;
+            --input-border: #334155;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            transition: 0.3s;
+        }
+
+        .bg-circle { position: fixed; z-index: -1; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
+        .header-box { background: var(--primary-gradient); padding: 50px 20px; border-radius: 30px; color: white; margin-bottom: -60px; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2); }
+        .main-card { border: none; border-radius: 30px; background: var(--bg-card); backdrop-filter: blur(10px); box-shadow: 0 20px 60px rgba(0,0,0,0.05); }
+
+        .section-divider { display: flex; align-items: center; margin: 40px 0 20px 0; }
+        .section-divider span { background: #6c5ce7; color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: bold; margin-right: 15px; }
+        .section-divider h5 { margin: 0; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .form-control, .form-select { border-radius: 12px; padding: 12px; border: 1.5px solid var(--input-border); background-color: var(--input-bg); color: var(--text-main); }
+        .form-label { font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; margin-left: 5px; }
+
+        .btn-submit { background: var(--primary-gradient); border: none; padding: 18px; border-radius: 15px; font-weight: 700; color: white; transition: 0.3s; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); }
+
+        .theme-toggle { cursor: pointer; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); border: 1px solid var(--input-border); color: #6c5ce7; }
+
+        .photo-upload-wrapper {
+            width: 150px; height: 150px; border: 2px dashed #6c5ce7; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center; position: relative;
+            overflow: hidden; background: var(--input-bg); margin: 0 auto 15px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .photo-upload-wrapper:hover { background: rgba(108, 92, 231, 0.05); border-color: #a29bfe; }
+        .photo-upload-wrapper img { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top: 0; left: 0; }
+        .photo-upload-wrapper i { font-size: 2.5rem; color: #6c5ce7; opacity: 0.5; }
+
+        .hidden-file-input input { display: none; }
     </style>
 </head>
 <body>
 
+<div class="bg-circle" style="width: 400px; height: 400px; background: #a29bfe; top: -100px; right: -100px;"></div>
+<div class="bg-circle" style="width: 300px; height: 300px; background: #fab1a0; bottom: -50px; left: -50px;"></div>
+
 <div class="container py-5">
-    <div class="d-flex justify-content-end mb-4">
-        <div class="btn-group shadow-sm">
-            <a href="?lang=uz" class="btn {% if lang == 'uz' %}btn-primary{% else %}btn-white{% endif %} btn-sm border">UZ</a>
-            <a href="?lang=ru" class="btn {% if lang == 'ru' %}btn-primary{% else %}btn-white{% endif %} btn-sm border">RU</a>
-            <a href="?lang=en" class="btn {% if lang == 'en' %}btn-primary{% else %}btn-white{% endif %} btn-sm border">EN</a>
+    <div class="d-flex justify-content-end mb-4 gap-2">
+        <div class="theme-toggle shadow-sm" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></div>
+        <div class="lang-switcher btn-group shadow-sm bg-white p-1 rounded-3">
+            <a href="?lang=uz{% if form.direction.value %}&direction_id={{ form.direction.value }}{% endif %}"
+               class="btn {% if lang == 'uz' %}btn-primary{% else %}btn-white border-0{% endif %}">UZ</a>
+
+            <a href="?lang=ru{% if form.direction.value %}&direction_id={{ form.direction.value }}{% endif %}"
+               class="btn {% if lang == 'ru' %}btn-primary{% else %}btn-white border-0{% endif %}">RU</a>
+
+            <a href="?lang=en{% if form.direction.value %}&direction_id={{ form.direction.value }}{% endif %}"
+               class="btn {% if lang == 'en' %}btn-primary{% else %}btn-white border-0{% endif %}">EN</a>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card shadow-lg">
-                <div class="form-header text-center">
-                    <h1><i class="fas fa-university mb-3"></i></h1>
-                    <h2>{{ t.title }}</h2>
-                    <p>{{ t.subtitle }}</p>
-                </div>
+        <div class="col-xl-9">
+            <div class="header-box text-center">
+                <h1 class="fw-bold mb-2">{{ t.title }}</h1>
+                <p class="opacity-75">{{ t.subtitle }}</p>
+            </div>
 
+            <div class="card main-card">
                 <div class="card-body p-4 p-md-5">
-                    <form method="post" novalidate>
+                    <form method="post" enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
 
-                        <h5 class="section-title">{{ t.personal_title }}</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">{{ t.first_name }}</label>
-                                {{ form.first_name }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">{{ t.last_name }}</label>
-                                {{ form.last_name }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">{{ t.middle_name }}</label>
-                                {{ form.middle_name }}
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">{{ t.birth_date }}</label>
-                                {{ form.birth_date }}
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">{{ t.gender }}</label>
-                                {{ form.gender }}
-                            </div>
+                        <div class="section-divider"><span>1</span><h5>{{ t.personal_title }}</h5></div>
+
+                        <div class="text-center mb-4">
+                            <label for="id_photo" class="photo-upload-wrapper" id="photo-box">
+                                <i class="fas fa-user-plus" id="upload-icon"></i>
+                                <img id="image-preview" src="" alt="Preview">
+                            </label>
+                            <label class="form-label d-block mb-3" for="id_photo"><b>{{ form.photo.label }}</b></label>
+                            <div class="hidden-file-input">{{ form.photo }}</div>
                         </div>
 
-                        <h5 class="section-title">{{ t.passport_title }}</h5>
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">{{ t.passport_seria }}</label>
-                                {{ form.passport_seria }}
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold">{{ t.phone_number }}</label>
-                                {{ form.phone_number }}
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label small fw-bold">{{ t.email }}</label>
-                                {{ form.email }}
-                            </div>
+                            <div class="col-md-4"><label class="form-label">{{ t.last_name }}</label>{{ form.last_name }}</div>
+                            <div class="col-md-4"><label class="form-label">{{ t.first_name }}</label>{{ form.first_name }}</div>
+                            <div class="col-md-4"><label class="form-label">{{ t.middle_name }}</label>{{ form.middle_name }}</div>
+                            <div class="col-md-6"><label class="form-label"><i class="far fa-calendar-alt me-1"></i> {{ t.birth_date }}</label>{{ form.birth_date }}</div>
+                            <div class="col-md-6"><label class="form-label"><i class="fas fa-venus-mars me-1"></i> {{ t.gender }}</label>{{ form.gender }}</div>
                         </div>
 
-                        <h5 class="section-title">{{ t.parents_title }}</h5>
+                        <div class="section-divider"><span>2</span><h5>{{ t.passport_title }}</h5></div>
                         <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">{{ t.p_first_name }}</label>
-                                {{ form.parent_first_name }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">{{ t.p_last_name }}</label>
-                                {{ form.parent_last_name }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold">{{ t.p_phone }}</label>
-                                {{ form.parent_phone_number }}
-                            </div>
+                            <div class="col-md-6"><label class="form-label"><i class="far fa-id-card me-1"></i> {{ t.passport_seria }}</label>{{ form.passport_seria }}</div>
+                            <div class="col-md-6"><label class="form-label"><i class="fas fa-phone me-1"></i> {{ t.phone_number }}</label>{{ form.phone_number }}</div>
+                            <div class="col-12"><label class="form-label"><i class="far fa-envelope me-1"></i> {{ t.email }}</label>{{ form.email }}</div>
+                            <div class="col-12"><label class="form-label"><i class="fas fa-map-marker-alt me-1"></i> {{ t.address }}</label>{{ form.address }}</div>
                         </div>
 
-                        <h5 class="section-title">{{ t.edu_title }}</h5>
+                        <div class="section-divider"><span>3</span><h5>{{ t.parent_title }}</h5></div>
                         <div class="row g-3">
-                            <div class="col-md-12">
-                                <label class="form-label small fw-bold">{{ t.school_name }}</label>
-                                {{ form.school_name }}
+                            <div class="col-12"><label class="form-label">{{ t.contact_person }}</label>{{ form.choice_field }}</div>
+                            <div class="col-md-6"><label class="form-label">{{ t.parent_last_name }}</label>{{ form.parent_last_name }}</div>
+                            <div class="col-md-6"><label class="form-label">{{ t.parent_first_name }}</label>{{ form.parent_first_name }}</div>
+                            <div class="col-12"><label class="form-label">{{ t.parent_phone }}</label>{{ form.parent_phone_number }}</div>
+                        </div>
+
+                        <div class="section-divider"><span>4</span><h5>{{ t.edu_title }}</h5></div>
+                        <div class="row g-3">
+                            <div class="col-12"><label class="form-label">{{ t.school_name }}</label>{{ form.school_name }}</div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t.faculty_label }}</label>
+                                <select id="id_faculty_select" class="form-select">
+                                    <option value="">---------</option>
+                                    {% for faculty in faculties_list %}
+                                        <option value="{{ faculty.id }}">
+                                            {% if lang == 'uz' %}{{ faculty.name_uz|default:faculty.name }}
+                                            {% elif lang == 'ru' %}{{ faculty.name_ru|default:faculty.name }}
+                                            {% else %}{{ faculty.name_en|default:faculty.name }}{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
                             </div>
-                            <div class="col-md-12">
-                                <div class="form-check p-3 bg-light rounded border">
-                                    {{ form.is_graduated }}
-                                    <label class="form-check-label fw-bold ms-2">{{ t.graduated_label }}</label>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label small fw-bold">{{ form.address.label }}</label>
-                                {{ form.address }}
-                            </div>
-                            <div class="col-md-12 mt-4">
-                                <label class="form-label small fw-bold">{{ t.direction }}</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label">{{ t.direction_label }}</label>
                                 {{ form.direction }}
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label small fw-bold">{{ t.edu_lang }}</label>
-                                {{ form.education_language }}
-                            </div>
+
+                            <div class="col-md-6"><label class="form-label">{{ t.edu_lang }}</label>{{ form.education_language }}</div>
                         </div>
 
                         {% if form.errors %}
-                            <div class="alert alert-danger mt-4">
-                                <ul class="mb-0">
-                                    {% for field in form %}
-                                        {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
-                                    {% endfor %}
-                                </ul>
-                            </div>
+                        <div class="alert alert-danger mt-4 rounded-4">
+                            <ul class="mb-0">
+                                {% for field in form %}{% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}{% endfor %}
+                            </ul>
+                        </div>
                         {% endif %}
 
                         <div class="d-grid mt-5">
-                            <button type="submit" class="btn btn-primary btn-submit shadow">
-                                {{ t.btn }} <i class="fas fa-chevron-right ms-2"></i>
+                            <button type="submit" class="btn btn-submit shadow-lg">
+                                {{ t.btn }} <i class="fas fa-arrow-right ms-2"></i>
                             </button>
                         </div>
                     </form>
-                </div>
-
-                <div class="card-footer bg-light text-center py-4">
-                    <div class="social-icons mb-3">
-                        <a href="#"><i class="fab fa-telegram-plane"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                    </div>
-                    <div class="text-secondary small">© 2026 {{ t.all_rights }}</div>
                 </div>
             </div>
         </div>
@@ -153,8 +178,140 @@
 </div>
 
 <script>
-    document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(el => el.classList.add('form-control'));
-    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.classList.add('form-check-input'));
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. Стили ---
+        function applyStyles() {
+            document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]), select, textarea').forEach(el => {
+                el.classList.add('form-control');
+            });
+            document.querySelectorAll('select').forEach(el => {
+                el.classList.replace('form-control', 'form-select');
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                el.classList.add('form-check-input');
+            });
+        }
+        applyStyles();
+
+        // --- 2. Логика списков ---
+        const facultySelect = document.getElementById('id_faculty_select');
+        const directionSelect = document.querySelector('select[name="direction"]');
+        const langSelect = document.querySelector('select[name="education_language"]');
+
+        const facultyMap = {{ faculty_map|safe|default:"{}" }};
+        const langsConfig = {{ langs_config|safe|default:"{}" }};
+
+        function updateDirections(facultyId, selectedDirId = null) {
+            if (!directionSelect) return;
+            const directions = facultyMap[facultyId] || [];
+            directionSelect.innerHTML = '<option value="">---------</option>';
+
+            directions.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.name;
+                if (selectedDirId && d.id == selectedDirId) opt.selected = true;
+                directionSelect.add(opt);
+            });
+        }
+
+        if (facultySelect && directionSelect) {
+            facultySelect.addEventListener('change', function() {
+                updateDirections(this.value);
+                if (langSelect) langSelect.innerHTML = '<option value="">---------</option>';
+                applyStyles();
+            });
+        }
+
+        function updateLanguageOptions() {
+            if (!directionSelect || !langSelect) return;
+            const dirId = directionSelect.value;
+            const available = langsConfig[dirId] || [];
+            const currentSelected = langSelect.value;
+
+            langSelect.innerHTML = '';
+            if (available.length === 0) {
+                const opt = document.createElement('option');
+                opt.text = "---------";
+                langSelect.add(opt);
+            } else {
+                available.forEach(langPair => {
+                    const opt = document.createElement('option');
+                    opt.value = langPair[0];
+                    opt.text = langPair[1];
+                    langSelect.add(opt);
+                });
+                if (Array.from(langSelect.options).some(opt => opt.value === currentSelected)) {
+                    langSelect.value = currentSelected;
+                }
+            }
+            applyStyles();
+        }
+
+        if (directionSelect) {
+            directionSelect.addEventListener('change', updateLanguageOptions);
+        }
+
+        // --- 3. Фото ---
+        const photoInput = document.querySelector('input[type="file"]');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadIcon = document.getElementById('upload-icon');
+
+        if (photoInput) {
+            photoInput.id = 'id_photo';
+            photoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        uploadIcon.style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // --- 5. АВТО-ВЫБОР ---
+        const preSelectedDirId = directionSelect ? directionSelect.value : null;
+        const preSelectedFacId = "{{ selected_faculty_id|default:'' }}";
+
+        if (preSelectedFacId && facultySelect) {
+            facultySelect.value = preSelectedFacId;
+            updateDirections(preSelectedFacId, preSelectedDirId);
+            updateLanguageOptions();
+            applyStyles();
+        } else if (preSelectedDirId) {
+            for (let facId in facultyMap) {
+                if (facultyMap[facId].some(d => d.id == preSelectedDirId)) {
+                    facultySelect.value = facId;
+                    updateDirections(facId, preSelectedDirId);
+                    updateLanguageOptions();
+                    applyStyles();
+                    break;
+                }
+            }
+        }
+    });
+
+    // --- 4. Тема ---
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('theme-icon');
+        const theme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', theme);
+        icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        localStorage.setItem('theme', theme);
+    }
+
+    (function() {
+        const saved = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', saved);
+        const icon = document.getElementById('theme-icon');
+        if (icon) icon.className = saved === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    })();
 </script>
+
 </body>
 </html>

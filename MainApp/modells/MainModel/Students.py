@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, EmailValidator
 from django.core.exceptions import ValidationError
 from datetime import date
-from MainApp.modells.Topick.Directions import Direction
+from MainApp.modells.Topick.Directions import Direction # Проверь этот импорт
 from django.utils.translation import gettext_lazy as _
 
 class Applicant(models.Model):
@@ -10,20 +10,20 @@ class Applicant(models.Model):
         ('M', _('Erkak')),
         ('F', _('Ayol')),
     ]
+
     education_language = models.CharField(
         max_length=2,
         choices=[('uz', 'Oze'), ('ru', 'Rus'), ('en', 'Eng')],
         default='uz'
     )
 
-
     first_name = models.CharField(max_length=50, verbose_name="Ismi")
     last_name = models.CharField(max_length=50, verbose_name="Familiyasi")
     middle_name = models.CharField(max_length=50, blank=True, verbose_name="Otchestvo")
     birth_date = models.DateField(verbose_name="Tug'ilgan sanasi")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name=_("Jinsi"))
+    photo = models.FileField(upload_to='applicants_photos/', verbose_name="Rasm") # Добавил upload_to
 
-    # --- Паспорт и Контакты ---
     passport_regex = RegexValidator(regex=r'^[A-Z]{2}\d{7}$', message="Pasport seriyasi AA1234567 formatida bo'lishi kerak")
     passport_seria = models.CharField(validators=[passport_regex], max_length=9, unique=True, verbose_name="Pasport seriyasi")
 
@@ -37,6 +37,14 @@ class Applicant(models.Model):
     )
     address = models.TextField(verbose_name="Yashash manzili")
 
+    # Исправил формат choice_field для модели
+    PARENT_CHOICES = [
+        ('Ona', _('Onam')),
+        ('Ota', _('Otam')),
+        ('Boshqa', _('Boshqa'))
+    ]
+    choice_field = models.CharField(max_length=10, choices=PARENT_CHOICES, verbose_name="Kim orqali bog'lanish")
+
     parent_first_name = models.CharField(max_length=50, verbose_name="Ota-onasining Ismi")
     parent_last_name = models.CharField(max_length=50, verbose_name="Ota-onasining Familiyasi")
     parent_phone_number = models.CharField(
@@ -44,7 +52,6 @@ class Applicant(models.Model):
         max_length=13,
         verbose_name="Ota-onasining Telefoni"
     )
-
     school_name = models.CharField(max_length=200, verbose_name="Tugatgan maktabi/kolleji")
     is_graduated = models.BooleanField(default=False, verbose_name="Maktabni tugatganmi?")
     direction = models.ForeignKey(Direction, on_delete=models.PROTECT, related_name="applicants", verbose_name="Yo'nalish")
@@ -56,7 +63,6 @@ class Applicant(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def clean(self):
-
         if self.birth_date:
             today = date.today()
             age = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
