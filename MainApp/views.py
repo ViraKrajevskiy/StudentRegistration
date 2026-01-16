@@ -108,7 +108,7 @@ def university_info(request):
     })
 
 def register_view(request):
-    # 1. Определяем язык
+
     user_language = request.GET.get('lang')
     if user_language not in ['ru', 'uz', 'en']:
         user_language = request.session.get('_language', 'uz')
@@ -116,7 +116,7 @@ def register_view(request):
     translation.activate(user_language)
     request.session['_language'] = user_language
 
-    # 2. Тексты переводов (ДОБАВЛЕНЫ СЕКЦИЯ 3 и ФАКУЛЬТЕТ)
+
     texts = {
         'uz': {
             'title': "Onlayn Qabul — 2026",
@@ -205,12 +205,11 @@ def register_view(request):
     }
     current_text = texts.get(user_language, texts['uz'])
 
-    # 3. Подготовка данных для JS (с учетом языка имен из БД)
+
     faculties = Faculty.objects.all()
     faculty_map = {}
 
     for f in faculties:
-        # Пытаемся взять имя на текущем языке, если нет - обычное name
         f_name = getattr(f, f'name_{user_language}', f.name)
 
         directions_data = []
@@ -222,7 +221,6 @@ def register_view(request):
 
     langs_config = {str(d.id): d.get_available_languages() for d in Direction.objects.all()}
 
-    # 4. Логика предвыбора
     selected_dir_id = request.GET.get('direction_id')
     selected_faculty_id = ""
     if selected_dir_id:
@@ -231,7 +229,6 @@ def register_view(request):
             selected_faculty_id = direction_obj.faculty.id
         except: pass
 
-    # 5. Обработка формы
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES, language=user_language)
         if form.is_valid():
@@ -244,7 +241,7 @@ def register_view(request):
     return render(request, 'registration/register.html', {
         'form': form,
         't': current_text,
-        'faculties_list': faculties, # Для первичной загрузки селекта
+        'faculties_list': faculties,
         'faculty_map': json.dumps(faculty_map),
         'langs_config': json.dumps(langs_config),
         'selected_faculty_id': selected_faculty_id,

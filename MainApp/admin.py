@@ -1,14 +1,13 @@
 import json
 from django.contrib import admin
 from django.db.models import Count
-from django.utils.safestring import mark_safe # Для отображения фото
+from django.utils.safestring import mark_safe 
 
-# Импорты всех твоих моделей
 from MainApp.modells.MainModel.Students import Applicant
 from MainApp.modells.Topick.Directions import Direction, Faculty, Subject
 from MainApp.modells.Tests.Test import ExamResult
 
-# 1. Регистрация Факультетов
+
 @admin.register(Faculty)
 class FacultyAdmin(admin.ModelAdmin):
     list_display = ('name_uz', 'name_ru', 'name_en')
@@ -59,10 +58,9 @@ class ApplicantAdmin(admin.ModelAdmin):
         except (AttributeError, KeyError):
             return response
 
-        # Определяем текущий язык для графиков
+
         from django.utils import translation
         lang = translation.get_language()
-        # Выбираем поле в зависимости от языка (name_uz, name_ru или name_en)
         direction_field = f"direction__name_{lang}" if lang in ['ru', 'en'] else "direction__name_uz"
 
         direction_data = list(qs.values(direction_field).annotate(total=Count("id")).order_by("-total"))

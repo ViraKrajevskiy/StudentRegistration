@@ -9,7 +9,6 @@ class RegistrationForm(forms.ModelForm):
         language = kwargs.pop('language', 'uz')
         super().__init__(*args, **kwargs)
 
-        # 1. Расширяем словарь переводов для всех полей
         labels = {
             'ru': {
                 'gender': [('', '---'), ('M', 'Мужчина'), ('F', 'Женщина')],
@@ -39,20 +38,20 @@ class RegistrationForm(forms.ModelForm):
 
         txt = labels.get(language, labels['uz'])
 
-        # 2. Применяем переводы к спискам (Choices)
-        self.fields['gender'].choices = txt['gender']
-        self.fields['choice_field'].choices = txt['parents'] # Тот самый перевод мамы/папы
 
-        # 3. Применяем переводы к лейблам
+        self.fields['gender'].choices = txt['gender']
+        self.fields['choice_field'].choices = txt['parents']
+
+
         self.fields['address'].label = txt['addr']
         self.fields['is_graduated'].label = txt['grad']
         self.fields['photo'].label = txt['photo']
         self.fields['choice_field'].label = txt['choice_label']
 
-        # 4. Перевод направлений из БД (если есть поля name_ru, name_uz)
+
         if 'direction' in self.fields:
             self.fields['direction'].queryset = Direction.objects.all()
-            # Пытаемся взять имя на нужном языке, если поле существует в модели Direction
+
             self.fields['direction'].label_from_instance = lambda obj: getattr(obj, f'name_{language}', obj.name)
 
     class Meta:

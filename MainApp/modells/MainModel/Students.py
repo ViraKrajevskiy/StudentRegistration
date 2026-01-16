@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, EmailValidator
 from django.core.exceptions import ValidationError
 from datetime import date
-from MainApp.modells.Topick.Directions import Direction # Проверь этот импорт
+from MainApp.modells.Topick.Directions import Direction 
 from django.utils.translation import gettext_lazy as _
 
 class Applicant(models.Model):
@@ -37,7 +37,6 @@ class Applicant(models.Model):
     )
     address = models.TextField(verbose_name="Yashash manzili")
 
-    # Исправил формат choice_field для модели
     PARENT_CHOICES = [
         ('Ona', _('Onam')),
         ('Ota', _('Otam')),

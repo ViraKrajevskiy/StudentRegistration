@@ -179,7 +179,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. Стили ---
+
         function applyStyles() {
             document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]), select, textarea').forEach(el => {
                 el.classList.add('form-control');
@@ -193,7 +193,6 @@
         }
         applyStyles();
 
-        // --- 2. Логика списков ---
         const facultySelect = document.getElementById('id_faculty_select');
         const directionSelect = document.querySelector('select[name="direction"]');
         const langSelect = document.querySelector('select[name="education_language"]');
@@ -252,7 +251,6 @@
             directionSelect.addEventListener('change', updateLanguageOptions);
         }
 
-        // --- 3. Фото ---
         const photoInput = document.querySelector('input[type="file"]');
         const imagePreview = document.getElementById('image-preview');
         const uploadIcon = document.getElementById('upload-icon');
@@ -273,7 +271,6 @@
             });
         }
 
-        // --- 5. АВТО-ВЫБОР ---
         const preSelectedDirId = directionSelect ? directionSelect.value : null;
         const preSelectedFacId = "{{ selected_faculty_id|default:'' }}";
 
@@ -295,7 +292,6 @@
         }
     });
 
-    // --- 4. Тема ---
     function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');

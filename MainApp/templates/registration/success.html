@@ -37,7 +37,6 @@
             overflow: hidden;
         }
 
-                /* Фоновые круги как на главной */
                 .bg-circle { position: fixed; z-index: -1; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
 
                 .success-card {
@@ -115,7 +114,6 @@
         </div>
 
         <script>
-            // Применяем тему из localStorage
             (function() {
                 const saved = localStorage.getItem('theme') || 'light';
                 document.body.setAttribute('data-theme', saved);

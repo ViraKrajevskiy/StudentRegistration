@@ -37,7 +37,7 @@
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* Navbar */
+
         .navbar {
             background: var(--navbar-bg);
             backdrop-filter: blur(10px);
@@ -48,7 +48,7 @@
         .lang-link { text-decoration: none; font-weight: 700; color: var(--text-main); padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; }
         .lang-link.active { background: var(--primary-color); color: white !important; }
 
-        /* Hero Section */
+
         .hero-section {
             background: var(--hero-gradient);
             color: white;
@@ -58,16 +58,16 @@
         }
         .hero-badge { background: rgba(108, 92, 231, 0.2); color: var(--secondary-color); padding: 8px 20px; border-radius: 50px; font-weight: 600; border: 1px solid rgba(108, 92, 231, 0.3); }
 
-        /* Stat Overlap - Исправленный блок */
+
         .stat-overlap {
             position: relative;
-            margin-top: -80px; /* Блок заезжает на Hero */
+            margin-top: -80px;
             z-index: 10;
         }
         .stat-card { text-align: center; padding: 30px; }
         .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary-color); }
 
-        /* Cards */
+
         .direction-card {
             background: var(--card-bg);
             border: 1px solid var(--stat-border);
@@ -86,13 +86,13 @@
         .btn-main { background: var(--primary-color); color: white; padding: 15px 35px; border-radius: 15px; font-weight: 700; border: none; transition: 0.3s; }
         .btn-main:hover { background: var(--secondary-color); transform: scale(1.05); color: white; }
 
-        /* Badges */
+
         .badge-lang { font-size: 0.75rem; font-weight: 700; padding: 5px 10px; border-radius: 8px; }
         .badge-uz { background: rgba(25, 135, 84, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
         .badge-ru { background: rgba(13, 110, 253, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
         .badge-en { background: rgba(255, 193, 7, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
 
-        /* Mobile Optimization */
+
         @media (max-width: 768px) {
             .hero-section { padding: 80px 0 120px 0; }
             .stat-overlap { margin-top: -50px; }
@@ -218,10 +218,9 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Инициализация анимаций
+
         AOS.init({ duration: 800, once: true });
 
-        // Логика темной темы
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
         const body = document.body;
@@ -236,7 +235,6 @@
             }
         }
 
-        // Загрузка сохраненной темы
         const savedTheme = localStorage.getItem('theme') || 'light';
         body.setAttribute('data-bs-theme', savedTheme);
         updateIcon(savedTheme);
